@@ -16,11 +16,12 @@ from .const import (
 from .api import parse_device_info
 
 
-class KocomCoordinator(DataUpdateCoordinator):
-    """Kocom update coordinator."""
+class KocomSmartHomeCoordinator(DataUpdateCoordinator):
+    """Kocom Smart Home update coordinator."""
     _irdev = False
 
     def __init__(self, name, api, hass, entry) -> None:
+        """Initializes coordinator."""
         self.name = name
         self.api = api
         self.hass = hass
@@ -39,6 +40,7 @@ class KocomCoordinator(DataUpdateCoordinator):
         )
     
     async def get_energy_usage(self) -> dict:
+        """Fetches and updates energy usage data."""
         energy_usage = await self.api.fetch_energy_stdcheck()
         self._device_info.update({
             "data": energy_usage,
@@ -47,13 +49,15 @@ class KocomCoordinator(DataUpdateCoordinator):
         return self._device_info
 
     async def get_single_device(self, ctrl_resp=None) -> dict:
+        """Gets status for a single device."""
         if ctrl_resp:
             device_state = ctrl_resp
         else:
             device_state = await self.api.check_device_status(self.name)
 
-        if device_state["type"] == "totalcontrol" and device_state["entry"]:         
-            entry_to_list = device_state["entry"][0]["list"][0] # 0: totalcontrol, 1: totalelevator
+        if device_state["type"] == "totalcontrol" and device_state["entry"]:  
+            # 0: totalcontrol, 1: totalelevator       
+            entry_to_list = device_state["entry"][0]["list"][0]
             entry_to_list["value"] = ~int(entry_to_list["value"]) & 1
 
         power_key = "totallight" if self.name == "totalcontrol" else "power"
@@ -70,6 +74,7 @@ class KocomCoordinator(DataUpdateCoordinator):
         return self._device_info
     
     def _energy_usage_state(self, unique_id: str, target_date: str) -> dict:
+        """Returns energy usage state for given ID and date."""
         pattern = r"(elec|gas|water|hotwater|heat).*?(value|avg|price)"
         match = re.search(pattern, unique_id)
         if match:
@@ -80,9 +85,10 @@ class KocomCoordinator(DataUpdateCoordinator):
                 ):
                     return data_entry[data_type]
         else:
-            LOGGER.warning("Unable to update energy usage information.")
+            LOGGER.warning("Invalid energy usage ID format: %s", unique_id)
     
     def get_device_status(self, unique_id: str = None, function: str = "power") -> bool:
+        """Returns device power state."""
         if self._irdev and unique_id:
             id_parts = unique_id.split("-")[0].split("_")
             id = id_parts[0].title()
@@ -93,6 +99,7 @@ class KocomCoordinator(DataUpdateCoordinator):
             return self._device_info.get("data", {}).get(function)
         
     def _interpret_command(self, unique_id: str, value: int, function: str) -> tuple:
+        """Processes device command parameters."""
         id_parts = unique_id.split("-")[0].split("_")
         id = id_parts[0].title()
 
@@ -110,6 +117,7 @@ class KocomCoordinator(DataUpdateCoordinator):
         return id, function, value
 
     def _is_previous_month(self, date_str: str) -> bool:
+        """Checks if date is from previous month."""
         try:
             previous_month = int(date_str.split()[0].replace("-", "")) // 100
             current_year_month = int(datetime.now().strftime("%Y%m"))
@@ -118,11 +126,13 @@ class KocomCoordinator(DataUpdateCoordinator):
             return False
         
     def _update_sync_date(self):
+        """Updates device sync timestamp."""
         self._device_info.update({
             "sync_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         })
 
     async def _async_update_data(self) -> None:
+        """Updates device data based on type."""
         if self.name in ["gas", "vent", "totalcontrol"]:
             return await self.update_single_device()
         elif self.name == "energy":
@@ -133,6 +143,7 @@ class KocomCoordinator(DataUpdateCoordinator):
     async def set_device_command(
         self, unique_id: str, value: int, function: str = "power"
     ) -> None:
+        """Sends control command to device."""
         id, function, value = self._interpret_command(unique_id, value, function)
         ctrl_resp = await self.api.send_control_request(self.name, id, function, value)
 
@@ -144,6 +155,7 @@ class KocomCoordinator(DataUpdateCoordinator):
         await self.async_request_refresh()
 
     async def specify_elements(self) -> list:
+        """Returns list of energy usage elements."""
         energy_usage = await self.get_energy_usage()
         devices = []
 
@@ -175,10 +187,14 @@ class KocomCoordinator(DataUpdateCoordinator):
                 entry_device_info["device_id"] += f"-{self.entry.data['phone_number']}"
                 devices.append(entry_device_info)
 
-        LOGGER.debug("Get specify elements: %s", devices)
+        LOGGER.debug(
+            "Found %d energy usage elements: %s", len(devices), 
+            [f"{d['device_name']} ({d['device_id']})" for d in devices]
+        )
         return devices
 
     async def get_devices(self) -> list:
+        """Returns list of available devices."""
         devices = []
         if self.name == "energy":
             devices = await self.specify_elements()
@@ -220,19 +236,27 @@ class KocomCoordinator(DataUpdateCoordinator):
                             "device_type": device_type,
                             "reg_date": reg_date
                         })
-        LOGGER.debug("Get devices: %s", devices)
+
+        LOGGER.debug(
+            "Found %d devices for %s: %s", len(devices), self.name,
+            [f"{d['device_name']} ({d['device_id']})" for d in devices]
+        )
         return devices
 
     async def update_single_device(self) -> None:
+        """Updates single device status."""
         return await self.get_single_device()
     
     async def update_energy_usage(self) -> None:
+        """Updates energy usage data."""
         return await self.get_energy_usage()
         
     async def update_room_device(self) -> None:
+        """Updates room device state."""
         return await self.api.update_device_state(self.name)
 
     def get_device_info(self) -> DeviceInfo:
+        """Returns device information."""
         is_specific_name = self.name in ["gas", "vent", "totalcontrol", "room"]
         return DeviceInfo(
             identifiers={(DOMAIN, "kocom" if is_specific_name else self.name)},
@@ -241,4 +265,3 @@ class KocomCoordinator(DataUpdateCoordinator):
             model=self.api.user_credentials["pairing_info"]["alias"],
             sw_version=VERSION,
         )
-    

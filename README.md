@@ -5,16 +5,15 @@
 
 ## 기여
 
-코콤 스마트홈에 문제가 있나요? [Issues](https://github.com/lunDreame/kocom_smart_home/issues) 탭을 열어 작성해 주세요
+코콤 스마트홈에 문제가 있나요? [Issues](https://github.com/lunDreame/homeassistant-kocom-smarthome/issues) 탭을 열어 작성해 주세요
 
-- 베타 버전으로, 현재는 소수의 사용자를 대상으로 통합을 제공합니다.
-- 더 좋은 아이디어가 있나요? [Pull requests](https://github.com/lunDreame/kocom_smart_home/pulls) 열어 등록해 주세요.
+- 더 좋은 아이디어가 있나요? [Pull requests](https://github.com/lunDreame/homeassistant-kocom-smarthome/pulls) 열어 등록해 주세요.
 
 이 통합이 당신에게 도움이 되셨나요? [카카오페이](https://qr.kakaopay.com/FWDWOBBmR) [토스](https://toss.me/schicksal)
 
 ## 설치
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lunDreame&repository=kocom_smart_home&category=Integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lunDreame&repository=homeassistant-kocom-smarthome&category=Integration)
 
 이 통합을 설치하려면 이 GitHub Repo를 HACS Custom Reposities에 추가하거나 위의 배지를 클릭하세요.
 
