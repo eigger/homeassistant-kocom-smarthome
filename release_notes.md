@@ -1,3 +1,10 @@
+### V1.1.10
+- 도메인이 kocom_smart_home에서 kocom_smarthome으로 변경되었습니다.
+- 따라서 기존 사용자분들께선 새로운 주소로 설치 부탁드립니다. (https://github.com/lunDreame/homeassistant-kocom-smarthome)
+
+### V1.1.9
+- ...
+
 ### V1.1.8
 - 수정
 
