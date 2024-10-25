@@ -1,6 +1,6 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-# Kocom Samrt Home
+# KOCOM Samrt Home
 코콤 스마트홈+ 사용자를 위한 홈 어시스턴트 통합.
 
 ## 기여
@@ -51,5 +51,5 @@
 logger:
   default: info
   logs:
-    custom_components.kocom_smart_home: debug
+    custom_components.kocom_smarthome: debug
 ```
