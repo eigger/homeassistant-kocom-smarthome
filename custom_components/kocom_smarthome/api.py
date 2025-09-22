@@ -54,10 +54,10 @@ class KocomSmartHomeAPI:
         self.apartment_tokens: dict[str, str] = {}
         self.user_credentials: dict[str, Any] = {}
         self.device_settings: dict[str, Any] = {
-            "light": {},
-            "concent": {},
-            "heat": {},  
-            "aircon": {}
+            # "light": {},
+            # "concent": {},
+            # "heat": {},  
+            # "aircon": {}
         }
 
     async def initialize_devices(self, entry: ConfigEntry):

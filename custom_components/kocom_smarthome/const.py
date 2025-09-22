@@ -7,18 +7,12 @@ from homeassistant.const import UnitOfEnergy, UnitOfVolume
 
 LOGGER = logging.getLogger(__name__)
 
-NAME = "코콤 스마트홈"
 DOMAIN = "kocom_smarthome"
-VERSION = "1.1.10"
 
 REQUEST_TIMEOUT = 5
 
 PLATFORMS = [
-    Platform.FAN,
-    Platform.LIGHT,
     Platform.SENSOR,
-    Platform.SWITCH,
-    Platform.CLIMATE,
 ]
 
 DEFAULT_TEMP_RANGE = {
