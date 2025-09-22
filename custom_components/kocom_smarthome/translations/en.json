@@ -1,5 +1,5 @@
 {
-    "title": "KOCOM Smart Home",
+    "title": "KOCOM Smart Home+",
     "config": {
         "step": {
             "user": {
@@ -17,16 +17,7 @@
             },
             "options": {
                 "data": {
-                    "room_count": "Number of rooms",
-                    "switch_count": "Number of switches",
-                    "light_interval": "Light scan interval (seconds)",
-                    "concent_interval": "Concent scan interval (seconds)",
-                    "heat_interval": "Heat scan interval (seconds)",
-                    "aircon_interval": "Aircon scan interval (seconds)",
-                    "gas_interval": "Gas scan interval (seconds)",
-                    "vent_interval": "Vent scan interval (seconds)",
-                    "energy_interval": "Energy scan interval (seconds)",
-                    "totalcontrol_interval": "Total control scan interval (seconds)"
+                    "energy_interval": "Energy scan interval (hours)"
                 },
                 "description": "You can adjust the scan interval for each device, in seconds.\n If the scan interval is too low, the server may be over-requested, so set it appropriately.\n You can set the number of rooms and switches for the device.",
                 "title": "Adjusting Options"
@@ -53,14 +44,7 @@
             "init": {
                 "title": "Adjusting Options",
                 "data": {
-                    "light_interval": "Light scan interval (seconds)",
-                    "concent_interval": "Concent scan interval (seconds)",
-                    "heat_interval": "Heat scan interval (seconds)",
-                    "aircon_interval": "Aircon scan interval (seconds)",
-                    "gas_interval": "Gas scan interval (seconds)",
-                    "vent_interval": "Vent scan interval (seconds)",
-                    "energy_interval": "Energy scan interval (seconds)",
-                    "totalcontrol_interval": "Total control scan interval (seconds)"
+                    "energy_interval": "Energy scan interval (hours)"
                 }
             }
         }

@@ -1,5 +1,5 @@
 {
-    "title": "코콤 스마트홈",
+    "title": "코콤 스마트홈+",
     "config": {
         "step": {
             "user": {
@@ -17,16 +17,7 @@
             },
             "options": {
                 "data": {
-                    "room_count": "방 개수",
-                    "switch_count": "스위치 개수",
-                    "light_interval": "조명 스캔 간격 (초)",
-                    "concent_interval": "콘센트 스캔 간격 (초)",
-                    "heat_interval": "난방 스캔 간격 (초)",
-                    "aircon_interval": "에어컨 스캔 간격 (초)",
-                    "gas_interval": "가스 스캔 간격 (초)",
-                    "vent_interval": "환기 스캔 간격 (초)",
-                    "energy_interval": "에너지 스캔 간격 (초)",
-                    "totalcontrol_interval": "통합제어 스캔 간격 (초)"
+                    "energy_interval": "에너지 스캔 간격 (시)"
                 },
                 "description": "각 기기의 스캔 간격을 초 단위로 조정할 수 있습니다.\n스캔 간격이 너무 낮으면 서버에 과부하가 걸릴 수 있으니 적절하게 설정해주세요.\n기기의 방 개수와 스위치 개수를 설정할 수 있습니다.",
                 "title": "옵션 조정"
@@ -53,14 +44,7 @@
             "init": {
                 "title": "옵션 조정",
                 "data": {
-                    "light_interval": "조명 스캔 간격 (초)",
-                    "concent_interval": "콘센트 스캔 간격 (초)",
-                    "heat_interval": "난방 스캔 간격 (초)",
-                    "aircon_interval": "에어컨 스캔 간격 (초)",
-                    "gas_interval": "가스 스캔 간격 (초)",
-                    "vent_interval": "환기 스캔 간격 (초)",
-                    "energy_interval": "에너지 스캔 간격 (초)",
-                    "totalcontrol_interval": "통합제어 스캔 간격 (초)"
+                    "energy_interval": "에너지 스캔 간격 (시)"
                 }
             }
         }

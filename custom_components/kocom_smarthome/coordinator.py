@@ -7,7 +7,6 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
     DOMAIN,
-    VERSION,
     LOGGER,
     DEFAULT_TEMP_RANGE,
     ELEMENT_INFO,
@@ -36,7 +35,7 @@ class KocomSmartHomeCoordinator(DataUpdateCoordinator):
             self._device_info = {"data": {}, "sync_date": ""}
             
         super().__init__(
-            hass, LOGGER, name=name, update_interval=timedelta(seconds=update_interval)
+            hass, LOGGER, name=name, update_interval=timedelta(hours=update_interval)
         )
     
     async def get_energy_usage(self) -> dict:
@@ -262,6 +261,5 @@ class KocomSmartHomeCoordinator(DataUpdateCoordinator):
             identifiers={(DOMAIN, "kocom" if is_specific_name else self.name)},
             name="KOCOM" if is_specific_name else f"KOCOM {self.name.title()}",
             manufacturer="Kocom Co, Ltd.",
-            model=self.api.user_credentials["pairing_info"]["alias"],
-            sw_version=VERSION,
+            model=self.api.user_credentials["pairing_info"]["alias"]
         )

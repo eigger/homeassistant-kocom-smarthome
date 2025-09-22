@@ -113,16 +113,7 @@ class KocomSmartHomeConfigFlow(ConfigFlow, domain=DOMAIN):
 
         data_schema = vol.Schema(
             {
-                vol.Required("room_count", default=4): int_between(1, 6),
-                vol.Required("switch_count", default=2): int_between(1, 8),
-                vol.Required("light_interval", default=120): cv.positive_int,
-                vol.Required("concent_interval", default=300): cv.positive_int,
-                vol.Required("heat_interval", default=300): cv.positive_int,
-                vol.Required("aircon_interval", default=300): cv.positive_int,
-                vol.Required("gas_interval", default=600): cv.positive_int,
-                vol.Required("vent_interval", default=600): cv.positive_int,
-                vol.Required("energy_interval", default=1200): cv.positive_int,
-                vol.Required("totalcontrol_interval", default=900): cv.positive_int,
+                vol.Required("energy_interval", default=24): cv.positive_int,
             }
         )
 
@@ -147,44 +138,9 @@ class KocomSmartHomeOptionsFlowHandler(OptionsFlow):
         
         data_schema = vol.Schema({
             vol.Required(
-                "light_interval",
-                default=self.config_entry.options.get(
-                    "light_interval", self.config_entry.data["light_interval"])
-                ): cv.positive_int,
-            vol.Required(
-                "concent_interval",
-                default=self.config_entry.options.get(
-                    "concent_interval", self.config_entry.data["concent_interval"])
-                ): cv.positive_int,
-            vol.Required(
-                "heat_interval",
-                default=self.config_entry.options.get(
-                    "heat_interval", self.config_entry.data["heat_interval"])
-                ): cv.positive_int,
-            vol.Required(
-                "aircon_interval",
-                default=self.config_entry.options.get(
-                    "aircon_interval", self.config_entry.data["aircon_interval"])
-                ): cv.positive_int,
-            vol.Required(
-                "gas_interval",
-                default=self.config_entry.options.get(
-                    "gas_interval", self.config_entry.data["gas_interval"])
-                ): cv.positive_int,
-            vol.Required(
-                "vent_interval",
-                default=self.config_entry.options.get(
-                    "vent_interval", self.config_entry.data["vent_interval"])
-                ): cv.positive_int,
-            vol.Required(
                 "energy_interval",
                 default=self.config_entry.options.get(
                     "energy_interval", self.config_entry.data["energy_interval"])
-                ): cv.positive_int,
-            vol.Required(
-                "totalcontrol_interval",
-                default=self.config_entry.options.get(
-                    "totalcontrol_interval", self.config_entry.data["totalcontrol_interval"])
                 ): cv.positive_int,
             }
         )
