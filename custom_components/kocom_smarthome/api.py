@@ -66,13 +66,13 @@ class KocomSmartHomeAPI:
         self.user_credentials = self.entry.data.get("pairing_data", {})
         #self.session = aiohttp.ClientSession()
         
-        if not any(self.device_settings.values()):
-            await asyncio.gather(
-                self.update_device_state("light"),
-                self.update_device_state("concent"),
-                self.update_device_state("heat"),
-                self.update_device_state("aircon")
-            )
+        # if not any(self.device_settings.values()):
+        #     await asyncio.gather(
+        #         self.update_device_state("light"),
+        #         self.update_device_state("concent"),
+        #         self.update_device_state("heat"),
+        #         self.update_device_state("aircon")
+        #     )
 
     async def close(self):
         """Close API session"""
