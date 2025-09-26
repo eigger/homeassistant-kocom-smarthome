@@ -10,8 +10,6 @@ from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
     OptionsFlow,
-    OptionsFlowWithReload,
-    ConfigFlowResult,
 )
 
 from .api import KocomSmartHomeAPI
@@ -124,24 +122,29 @@ class KocomSmartHomeConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
+class KocomSmartHomeOptionsFlowHandler(OptionsFlow):
+    """Handle a option flow."""
 
-OPTIONS_SCHEMA = vol.Schema(
-    {
-        vol.Required("energy_interval"): cv.positive_int,
-    }
-)
-class KocomSmartHomeOptionsFlowHandler(OptionsFlowWithReload):
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+    
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
-        """Manage the options."""
+    ) -> FlowResult:
+        """Handle options flow."""
         if user_input is not None:
-            return self.async_create_entry(data=user_input)
+            return self.async_create_entry(title="", data=user_input)
+        
+        data_schema = vol.Schema({
+            vol.Required(
+                "energy_interval",
+                default=self.config_entry.options.get(
+                    "energy_interval", self.config_entry.data["energy_interval"])
+                ): cv.positive_int,
+            }
+        )
 
         return self.async_show_form(
-            step_id="init",
-            data_schema=self.add_suggested_values_to_schema(
-                OPTIONS_SCHEMA, self.config_entry.options
-            ),
+            step_id="init", data_schema=data_schema, errors={},
         )
-    
