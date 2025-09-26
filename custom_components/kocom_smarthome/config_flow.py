@@ -123,22 +123,25 @@ class KocomSmartHomeConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="options", data_schema=data_schema, errors={},
         )
 
+
+
+OPTIONS_SCHEMA = vol.Schema(
+    {
+        vol.Required("energy_interval"): cv.positive_int,
+    }
+)
 class KocomSmartHomeOptionsFlowHandler(OptionsFlowWithReload):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            return self.async_create_entry(data=user_input)
 
         return self.async_show_form(
             step_id="init",
-            data_schema = vol.Schema({
-                vol.Required(
-                    "energy_interval",
-                    default=self.config_entry.options.get(
-                        "energy_interval", self.config_entry.data["energy_interval"])
-                    ): cv.positive_int,
-                }
+            data_schema=self.add_suggested_values_to_schema(
+                OPTIONS_SCHEMA, self.config_entry.options
             ),
         )
+    
