@@ -158,33 +158,44 @@ class KocomSmartHomeCoordinator(DataUpdateCoordinator):
         energy_usage = await self.get_energy_usage()
         devices = []
 
+        current_month_energies = {
+            info["energy"] for info in energy_usage["data"]["list"] 
+            if not self._is_previous_month(info["date"])
+        }
+
         for usage_device_info in energy_usage["data"]["list"]:
             is_prev_month = self._is_previous_month(usage_device_info["date"])
-            prev_suffix = "_previous" if is_prev_month else ""
-            energy_type = usage_device_info["energy"]
+            
+            add_instances = [(is_prev_month, usage_device_info)]
+            if is_prev_month and usage_device_info["energy"] not in current_month_energies:
+                add_instances.append((False, usage_device_info))
 
-            for key, value in usage_device_info.items():
-                if key in ["energy", "date"]:
-                    continue
+            for current_is_prev, current_usage_info in add_instances:
+                prev_suffix = "_previous" if current_is_prev else ""
+                energy_type = current_usage_info["energy"]
 
-                entry_device_info = {
-                    "device_id": f"{energy_type}{prev_suffix}_{key}_usage" 
-                    if key != "price" 
-                    else f"{energy_type}{prev_suffix}_expect_price",
-                    "device_name": f"{ELEMENT_UNITNAME[f'{prev_suffix}{key}']} {ELEMENT_INFO[energy_type][0]}" 
-                    if key != "price" else 
-                    f"{ELEMENT_INFO[energy_type][0]} {ELEMENT_UNITNAME[f'{prev_suffix}price']}",
-                    "device_icon": ELEMENT_INFO[energy_type][1],
-                    "device_unit": ELEMENT_INFO[energy_type][2] if key != "price" else "KRW/kWh",
-                    "device_class": ELEMENT_INFO[energy_type][3],
-                    "state_class": ELEMENT_INFO[energy_type][4],
-                    "device_room": usage_device_info["energy"],
-                    "device_type": key,
-                    "is_prev_month": is_prev_month,
-                    "reg_date": usage_device_info["date"]
-                }       
-                entry_device_info["device_id"] += f"-{self.entry.data['phone_number']}"
-                devices.append(entry_device_info)
+                for key, value in current_usage_info.items():
+                    if key in ["energy", "date"]:
+                        continue
+
+                    entry_device_info = {
+                        "device_id": f"{energy_type}{prev_suffix}_{key}_usage" 
+                        if key != "price" 
+                        else f"{energy_type}{prev_suffix}_expect_price",
+                        "device_name": f"{ELEMENT_UNITNAME[f'{prev_suffix}{key}']} {ELEMENT_INFO[energy_type][0]}" 
+                        if key != "price" else 
+                        f"{ELEMENT_INFO[energy_type][0]} {ELEMENT_UNITNAME[f'{prev_suffix}price']}",
+                        "device_icon": ELEMENT_INFO[energy_type][1],
+                        "device_unit": ELEMENT_INFO[energy_type][2] if key != "price" else "KRW/kWh",
+                        "device_class": ELEMENT_INFO[energy_type][3],
+                        "state_class": ELEMENT_INFO[energy_type][4],
+                        "device_room": current_usage_info["energy"],
+                        "device_type": key,
+                        "is_prev_month": current_is_prev,
+                        "reg_date": current_usage_info["date"]
+                    }       
+                    entry_device_info["device_id"] += f"-{self.entry.data['phone_number']}"
+                    devices.append(entry_device_info)
 
         LOGGER.debug(
             "Found %d energy usage elements: %s", len(devices), 
@@ -197,44 +208,6 @@ class KocomSmartHomeCoordinator(DataUpdateCoordinator):
         devices = []
         if self.name == "energy":
             devices = await self.specify_elements()
-        elif self.name in ["gas", "vent", "totalcontrol"]:
-            single_device = await self.get_single_device()
-            entry_device_info = {
-                "device_id": f"{single_device['data']['attr']['id'].lower()}_00",
-                "device_name": {"gas": "가스", "vent": "환기", "totalcontrol": "일괄소등"}[self.name],
-                "device_room": "00",
-                "device_type": single_device["data"]["attr"]["type"],
-                "reg_date": single_device["data"]["attr"]["reg_date"]
-            }
-            entry_device_info["device_id"] += f"-{self.entry.data['phone_number']}"
-            devices.append(entry_device_info)
-        else:
-            for entry in self._device_info["data"]["entry"]:
-                for entry_list in entry["list"]:
-                    device_id = entry.get("id", "").lower()
-                    function = entry_list.get("function", "")
-                    device_name = f"{entry.get('id', '')} {function}" if function else f"{entry.get('id', '')} 00"
-                    device_room = entry.get("id", "")[-2:] if function else "00"
-                    device_type = self._device_info["data"]["type"]
-                    reg_date = entry.get("reg_date", "")
-
-                    if device_type in ["heat", "aircon"]:
-                        devices.append({
-                            "device_id": f"{device_id}_00-{self.entry.data['phone_number']}",
-                            "device_name": device_name,
-                            "device_room": device_room,
-                            "device_type": device_type,
-                            "reg_date": reg_date,
-                            **DEFAULT_TEMP_RANGE.get(device_type, {})
-                        })
-                    else:
-                        devices.append({
-                            "device_id": f"{device_id}_{function}-{self.entry.data['phone_number']}",
-                            "device_name": device_name,
-                            "device_room": device_room,
-                            "device_type": device_type,
-                            "reg_date": reg_date
-                        })
 
         LOGGER.debug(
             "Found %d devices for %s: %s", len(devices), self.name,
