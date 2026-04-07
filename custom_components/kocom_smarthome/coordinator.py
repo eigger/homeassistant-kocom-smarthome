@@ -118,9 +118,15 @@ class KocomSmartHomeCoordinator(DataUpdateCoordinator):
     def _is_previous_month(self, date_str: str) -> bool:
         """Checks if date is from previous month."""
         try:
-            previous_month = int(date_str.split()[0].replace("-", "")) // 100
+            # Extract year-month reliably from values like
+            # YYYY-MM-DD, YYYYMMDD, YYYY-MM, YYYYMM.
+            digits = re.sub(r"[^0-9]", "", str(date_str))
+            if len(digits) < 6:
+                return False
+
+            target_year_month = int(digits[:6])
             current_year_month = int(datetime.now().strftime("%Y%m"))
-            return current_year_month > previous_month
+            return target_year_month < current_year_month
         except Exception:
             return False
         
